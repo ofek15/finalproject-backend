@@ -1,0 +1,18 @@
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+
+const parking = new Schema({
+    parkingName: {type:String, required: true},
+    parkingLocation: {type:String, required: true},
+    latitude: {type:String, required: true},
+    longitude: {type:String, required: true},
+    photos: [{type:String, required: true}],
+    availableToPark: {type:Boolean, required: true},  
+    availableStart: {type:String, required: true},
+    availableEnd: {type:String, required: true},
+    pricePerHour: {type:String, required: true},
+    ownerID: {type:String, required: true},
+    whoIsParking: {type:String}
+})
+
+module.exports=mongoose.model("parking", parking)
