@@ -27,12 +27,24 @@ const publishUser = async (req, res) => {
       username: req.body.username,
       password: hashedPassword,
       firstName: req.body.firstName,
-      lastName: req.body.lastName,  
+      lastName: req.body.lastName,
       email: req.body.email,
-      phoneNumber:req.body.phoneNumber,
+      phoneNumber: req.body.phoneNumber,
       currentParking: false
     });
-    return res.status(200).json(newUser);
+
+    const userExists = await User.findOne({ username: req.body.username });
+    if (!userExists) {
+      return res.status(400).json('wrong credentials')
+    }
+    const isMatch = await bcrypt.compare(
+      req.body.password,
+      userExists.password
+    );
+    if (isMatch == true) {
+      const token = jwt.sign({ _id: userExists._id }, process.env.SECRET, { expiresIn: "24h" });
+      return res.status(200).json(token);
+    }
   } catch (err) {
     res.status(500).json(err.message);
   }
@@ -41,15 +53,15 @@ const publishUser = async (req, res) => {
 const loginFunc = async (req, res) => {
   try {
     const userExists = await User.findOne({ username: req.body.username });
-    if (!userExists){
+    if (!userExists) {
       return res.status(400).json('wrong credentials')
     }
     const isMatch = await bcrypt.compare(
       req.body.password,
       userExists.password
     );
-    if (isMatch==true) {
-      const token = jwt.sign({ _id: userExists._id }, process.env.SECRET, {expiresIn: "24h"});
+    if (isMatch == true) {
+      const token = jwt.sign({ _id: userExists._id }, process.env.SECRET, { expiresIn: "24h" });
       return res.status(200).json(token);
     } else {
       return res.status(400).json("wrong username/password");
@@ -76,13 +88,14 @@ const updateUser = async (req, res) => {
       saltround
     );
     const updateUser = await User.findByIdAndUpdate(req.body._id, {
-        username: req.body.username,
-        password: hashedPasswordforupdate,
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,  
-        email: req.body.email,
-        phoneNumber:req.body.phoneNumber,
-    });
+      username: req.body.username,
+      password: hashedPasswordforupdate,
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+      email: req.body.email,
+      phoneNumber: req.body.phoneNumber,
+    },
+      { new: true });
     console.log(updateUser);
     res.status(200).json(updateUser);
   } catch (err) {
@@ -93,17 +106,18 @@ const updateUser = async (req, res) => {
 
 const translateToken = async (req, res) => {
   try {
-      const token = req.body.token
-      console.log(token);
-      const username = jwt.verify(token, process.env.SECRET)
-      console.log(username);
+    const token = req.body.token
+    console.log(token);
+    const username = jwt.verify(token, process.env.SECRET)
+    console.log(username);
 
-      const UserData = await User.findOne({ username: username.username }).populate("parking")
-      return res.status(200).json(UserData)
+    const UserData = await User.findOne({ _id:username._id }).populate("myParking")
+    console.log(UserData);
+    return res.status(200).json(UserData)
   }
   catch (err) {
-      return res.status(500).json(err.message)
+    return res.status(500).json(err.message)
   }
 
 }
-module.exports = { fetchUser, publishUser, deleteUser, updateUser, loginFunc,translateToken };
+module.exports = { fetchUser, publishUser, deleteUser, updateUser, loginFunc, translateToken };
