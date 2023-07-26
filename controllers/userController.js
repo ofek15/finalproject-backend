@@ -61,7 +61,7 @@ const loginFunc = async (req, res) => {
       userExists.password
     );
     if (isMatch == true) {
-      const token = jwt.sign({ _id: userExists._id }, process.env.SECRET, { expiresIn: "24h" });
+      const token = jwt.sign({ _id: userExists._id }, process.env.SECRET, { expiresIn: "96h" });
       return res.status(200).json(token);
     } else {
       return res.status(400).json("wrong username/password");
