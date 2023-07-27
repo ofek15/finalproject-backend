@@ -15,10 +15,9 @@ const fetchParking= async (req, res) => {
   const publishParking = async (req, res) => {
     // console.log(req.body);
     try {
-      const token = req.body.token
-      const id1 = jwt.verify(token,process.env.SECRET)
-      id=id1._id
-      console.log(id);
+      // const token = req.body.token
+      // const id1 = jwt.verify(token,process.env.SECRET)
+      // id=id1._id
       const newParking = await Parking.create({
         parkingName: req.body.parkingName,
         parkingLocation: req.body.parkingLocation,
@@ -29,12 +28,12 @@ const fetchParking= async (req, res) => {
         pricePerHour:req.body.pricePerHour,
         lng: req.body.lng,
         lat:req.body.lat,
-        ownerID: id,
+        ownerID: req.body.ownerID,
         whoIsParking: null 
       });
       console.log("dngjr");
       const updatearrayofParkings= await User.updateOne(
-        {_id: id},
+        {_id: req.body.ownerID},
         {$push:{myParking:newParking}},
         {new:true})
       return res.status(200).json(updatearrayofParkings);
