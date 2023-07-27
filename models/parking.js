@@ -4,8 +4,8 @@ const Schema = mongoose.Schema;
 const parking = new Schema({
     parkingName: {type:String, required: true},
     parkingLocation: {type:String, required: true},
-    latitude: {type:String, required: true},
-    longitude: {type:String, required: true},
+    lat: {type:String, required: true},
+    lng: {type:String, required: true},
     photos: [{type:String, required: true}],
     availableToPark: {type:Boolean, required: true},  
     availableStart: {type:String, required: true},
