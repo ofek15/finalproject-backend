@@ -27,8 +27,8 @@ const fetchParking= async (req, res) => {
         availableStart: req.body.availableStart,
         availableEnd:req.body.availableEnd,
         pricePerHour:req.body.pricePerHour,
-        longitude: req.body.longitude,
-        latitude:req.body.latitude,
+        lng: req.body.lng,
+        lat:req.body.lat,
         ownerID: id,
         whoIsParking: null 
       });

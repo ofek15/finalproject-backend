@@ -111,8 +111,9 @@ const translateToken = async (req, res) => {
     const username = jwt.verify(token, process.env.SECRET)
     console.log(username);
 
-    const UserData = await User.findOne({ _id:username._id }).populate("myParking")
-    console.log(UserData);
+    const UserData = await User.findOne({ _id:username._id })
+    .populate("myParking")
+    .populate("myPayment")
     return res.status(200).json(UserData)
   }
   catch (err) {
@@ -120,4 +121,5 @@ const translateToken = async (req, res) => {
   }
 
 }
+
 module.exports = { fetchUser, publishUser, deleteUser, updateUser, loginFunc, translateToken };
