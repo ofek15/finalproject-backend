@@ -43,9 +43,10 @@ const fetchParking= async (req, res) => {
   };
 
   const deleteParking= async (req, res) => {
+    console.log(req.body._id)
     try {
-      await Parking.findOneAndDelete({ _id: req.body._id });
-      res.status(200).send("Parking was delete");
+      await Parking.findByIdAndDelete(req.body._id);
+      res.status(200).send("Parking was deleted");
     } catch (err) {
       res.status(500).json(err.message);
     }
