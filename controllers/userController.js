@@ -30,6 +30,7 @@ const publishUser = async (req, res) => {
       lastName: req.body.lastName,
       email: req.body.email,
       phoneNumber: req.body.phoneNumber,
+      licensePlates: req.body.licensePlates,
       currentParking: false
     });
 
@@ -94,6 +95,7 @@ const updateUser = async (req, res) => {
       lastName: req.body.lastName,
       email: req.body.email,
       phoneNumber: req.body.phoneNumber,
+      licensePlates: req.body.licensePlates,
     },
       { new: true });
     console.log(updateUser);

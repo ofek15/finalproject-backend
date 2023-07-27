@@ -25,6 +25,7 @@ const publishPayment = async (req, res) => {
       pricePerHour: req.body.pricePerHour,
       parkingLocation: req.body.parkingLocation,
       phoneToPay: req.body.phoneToPay,
+      parkName:req.body.parkName
     });
     const updatearrayofhistory = await User.updateOne(
       { _id: id },
