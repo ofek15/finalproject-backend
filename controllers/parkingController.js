@@ -53,11 +53,11 @@ const fetchParking= async (req, res) => {
   };
 
   const updateParking = async (req, res) => {
+    console.log(req.body)
    const parkingStatus = await Parking.findById(req.body._id)
    if(parkingStatus.availableToPark){
     try {
       const updateParking = await Parking.findByIdAndUpdate(req.body._id, {
-        parkingName: req.body.parkingName,
         availableStart: req.body.availableStart,
         availableEnd: req.body.availableEnd,
         pricePerHour: req.body.pricePerHour
