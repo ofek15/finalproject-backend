@@ -8,6 +8,7 @@ const payment = new Schema({
     pricePerHour: {type:String, required: true},  
     parkingLocation: {type:String, required: true},
     phoneToPay: {type:String, required: true},
+    clientPhone: {type:String, required: true},
     date: {type: Date, default: Date.now,}
 })
 
