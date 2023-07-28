@@ -12,6 +12,16 @@ const fetchParking= async (req, res) => {
     }
   };
 
+const findOneParking = async (req, res) => {
+  try{
+    const parking = await Parking.findById({_id: req.body._id})
+    res.status(200).json(parking);
+  } catch (err) {
+    res.status(500).json(err.message);
+    console.log(err.message);
+  }
+}
+
   const publishParking = async (req, res) => {
     // console.log(req.body);
     try {
@@ -56,7 +66,6 @@ const fetchParking= async (req, res) => {
    if(parkingStatus.availableToPark){
     try {
       const updateParking = await Parking.findByIdAndUpdate(req.body._id, {
-        parkingName: req.body.parkingName,
         availableStart: req.body.availableStart,
         availableEnd: req.body.availableEnd,
         pricePerHour: req.body.pricePerHour
@@ -74,4 +83,4 @@ const fetchParking= async (req, res) => {
   };
   
 
-  module.exports = {fetchParking, publishParking, deleteParking, updateParking};
+  module.exports = {fetchParking, publishParking, deleteParking, updateParking, findOneParking};

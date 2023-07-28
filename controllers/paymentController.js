@@ -25,6 +25,8 @@ const publishPayment = async (req, res) => {
       pricePerHour: req.body.pricePerHour,
       parkingLocation: req.body.parkingLocation,
       phoneToPay: req.body.phoneToPay,
+      clientPhone: req.body.clientPhone,
+      parkingName: req.body.parkingName,
     });
     const updatearrayofhistory = await User.updateOne(
       { _id: id },
@@ -40,7 +42,7 @@ const publishPayment = async (req, res) => {
 
     const availableToParkUpdate = await Parking.findOneAndUpdate(
       { _id: req.body.parking_id },
-      { availableToPark: false, whoIsParking: id},
+      { availableToPark: false, whoIsParking: id },
       { new: true }
     );
 
@@ -51,28 +53,27 @@ const publishPayment = async (req, res) => {
 };
 
 const updatePayment = async (req, res) => {
-    const token = req.body.token;
-    const id1 = jwt.verify(token, process.env.SECRET);
-    id = id1._id;
+  const token = req.body.token;
+  const id1 = jwt.verify(token, process.env.SECRET);
+  id = id1._id;
   try {
     const updatePayment = await Payment.findOneAndUpdate(
-      { _id:req.body.payments_id },
+      { _id: req.body.payments_id },
       { endTime: req.body.endTime },
       { new: true }
     );
 
     const currnetParkinUpdateb = await User.findOneAndUpdate(
-        { _id: id },
-        { currentParking: false },
-        { new: true }
-      );
+      { _id: id },
+      { currentParking: false },
+      { new: true }
+    );
 
-      const availableToParkUpdate = await Parking.findOneAndUpdate(
-        { _id: req.body.parking_id },
-        { availableToPark: true, whoIsParking: null},
-        { new: true }
-      );
-
+    const availableToParkUpdate = await Parking.findOneAndUpdate(
+      { _id: req.body.parking_id },
+      { availableToPark: true, whoIsParking: null },
+      { new: true }
+    );
 
     res.status(200).json(updatePayment);
   } catch (err) {
