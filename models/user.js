@@ -10,7 +10,8 @@ const user = new Schema({
     phoneNumber: {type:String, required: true},
     currentParking: {type:Boolean},
     myParking: [{type: mongoose.Types.ObjectId, ref: "parking"}],
-    myPayment: [{type: mongoose.Types.ObjectId, ref: "payment"}]    
+    myPayment: [{type: mongoose.Types.ObjectId, ref: "payment"}] ,   
+    licensePlates: [{type:String, unique: true}]    
 })
 
 module.exports=mongoose.model("user", user)

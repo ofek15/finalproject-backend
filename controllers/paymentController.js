@@ -26,7 +26,7 @@ const publishPayment = async (req, res) => {
       parkingLocation: req.body.parkingLocation,
       phoneToPay: req.body.phoneToPay,
       clientPhone: req.body.clientPhone,
-      parkingName: req.body.parkingName,
+      parkName:req.body.parkName
     });
     const updatearrayofhistory = await User.updateOne(
       { _id: id },
