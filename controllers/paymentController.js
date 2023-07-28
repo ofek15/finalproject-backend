@@ -20,13 +20,15 @@ const publishPayment = async (req, res) => {
     id = id1._id;
     console.log(id);
     const newPayment = await Payment.create({
+      parkingId:req.body.parkingId,
+      parkName:req.body.parkName,
       startTime: req.body.startTime,
       endTime: null,
       pricePerHour: req.body.pricePerHour,
       parkingLocation: req.body.parkingLocation,
       phoneToPay: req.body.phoneToPay,
       clientPhone: req.body.clientPhone,
-      parkName:req.body.parkName
+      finalPrice:req.body.finalPrice
     });
     const updatearrayofhistory = await User.updateOne(
       { _id: id },

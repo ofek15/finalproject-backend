@@ -15,6 +15,16 @@ const fetchUser = async (req, res) => {
   }
 };
 
+const findUserById = async (req, res) => {
+  try {
+    const oneUser = await User.findById({_id: req.body._id});
+    res.status(200).json(oneUser);
+  } catch (err) {
+    res.status(500).json(err.message);
+    console.log(err.message);
+  }
+};
+
 const publishUser = async (req, res) => {
   console.log(req.body);
   try {
@@ -124,4 +134,4 @@ const translateToken = async (req, res) => {
 
 }
 
-module.exports = { fetchUser, publishUser, deleteUser, updateUser, loginFunc, translateToken };
+module.exports = { fetchUser, publishUser, deleteUser, updateUser, loginFunc, translateToken, findUserById };
