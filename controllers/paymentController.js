@@ -17,6 +17,7 @@ const publishPayment = async (req, res) => {
   try {
     const token = req.body.token;
     const id1 = jwt.verify(token, process.env.SECRET);
+    const date = new Date()
     id = id1._id;
     console.log(id);
     const newPayment = await Payment.create({
@@ -28,7 +29,9 @@ const publishPayment = async (req, res) => {
       parkingLocation: req.body.parkingLocation,
       phoneToPay: req.body.phoneToPay,
       clientPhone: req.body.clientPhone,
-      finalPrice:req.body.finalPrice
+      finalPrice:req.body.finalPrice,
+      date: date
+      
     });
     const updatearrayofhistory = await User.updateOne(
       { _id: id },
