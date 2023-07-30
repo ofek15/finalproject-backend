@@ -39,7 +39,8 @@ const findOneParking = async (req, res) => {
         lng: req.body.lng,
         lat:req.body.lat,
         ownerID: req.body.ownerID,
-        whoIsParking: null 
+        whoIsParking: null ,
+        comments:req.body.comments
       });
       console.log("dngjr");
       const updatearrayofParkings= await User.updateOne(
