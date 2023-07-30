@@ -12,7 +12,8 @@ const parking = new Schema({
     availableEnd: {type:String, required: true},
     pricePerHour: {type:String, required: true},
     ownerID: {type:String, required: true},
-    whoIsParking: {type:String}
+    whoIsParking: {type:String},
+    comments:{type:String}
 })
 
 module.exports=mongoose.model("parking", parking)
