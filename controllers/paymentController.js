@@ -3,6 +3,25 @@ const User = require("../models/user");
 const Parking = require("../models/parking");
 const jwt = require("jsonwebtoken");
 
+function timeDifferenceInHours(dateStr, price) {
+  // Convert the input date string to a Date object
+  const inputDate = new Date(dateStr);
+
+  // Get the current date and time
+  const now = new Date();
+
+  // Calculate the time difference in milliseconds
+  const timeDifferenceInMilliseconds = now - inputDate;
+
+  // Convert the time difference to hours and round to 2 digits after the decimal point
+  const hoursDifference = timeDifferenceInMilliseconds / (1000 * 60 * 60);
+  const roundedHoursDifference = parseFloat(hoursDifference.toFixed(2));
+
+  const totalPrice = roundedHoursDifference * price
+
+  return totalPrice;
+}
+
 const fetchPayment = async (req, res) => {
   try {
     const allPayment = await Payment.find({});
@@ -11,14 +30,28 @@ const fetchPayment = async (req, res) => {
     res.status(500).json(err.message);
     console.log(err.message);
   }
-};
+};  
+
+const getLastPayment = async (req, res) => {
+  try {
+    const token = req.body.token;
+    const id1 = jwt.verify(token, process.env.SECRET);
+    let id = id1._id;
+    const allPaymentOfUser=await User.findById({_id: id}).populate("myPayment");
+    const lastPayment=allPaymentOfUser.myPayment[allPaymentOfUser.myPayment.length-1]
+    res.status(200).json(lastPayment)
+  } catch (err) {
+    res.status(500).json(err.message);
+    console.log(err.message);
+  }
+};  
 
 const publishPayment = async (req, res) => {
   try {
     const token = req.body.token;
     const id1 = jwt.verify(token, process.env.SECRET);
     const date = new Date()
-    id = id1._id;
+    const id = id1._id;
     console.log(id);
     const newPayment = await Payment.create({
       parkingId:req.body.parkingId,
@@ -62,9 +95,26 @@ const updatePayment = async (req, res) => {
   const id1 = jwt.verify(token, process.env.SECRET);
   id = id1._id;
   try {
+    const paymentsOfUser = await User.findOne({ _id: id }).populate("myPayment")
+    console.log("blabla",paymentsOfUser.myPayment[paymentsOfUser.myPayment.length-1],"from here")
+    const parkingID = paymentsOfUser.myPayment[paymentsOfUser.myPayment.length-1].parkingId;
+    const paymentID = paymentsOfUser.myPayment[paymentsOfUser.myPayment.length-1]._id
+
+
+    const now = new Date();
+    const hours = String(now.getHours()).padStart(2, '0'); 
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const endTimeAsString =`${hours}:${minutes}`;
+
     const updatePayment = await Payment.findOneAndUpdate(
-      { _id: req.body.payments_id },
-      { endTime: req.body.endTime },
+      { _id: paymentID },
+      { endTime: endTimeAsString},
+      { new: true }
+    );
+
+    const updatePayment2 = await Payment.findOneAndUpdate(
+      { _id: paymentID },
+      { finalPrice: timeDifferenceInHours(paymentsOfUser.myPayment[paymentsOfUser.myPayment.length-1].date, Number(paymentsOfUser.myPayment[paymentsOfUser.myPayment.length-1].pricePerHour))},
       { new: true }
     );
 
@@ -75,16 +125,16 @@ const updatePayment = async (req, res) => {
     );
 
     const availableToParkUpdate = await Parking.findOneAndUpdate(
-      { _id: req.body.parking_id },
+      { _id: parkingID },
       { availableToPark: true, whoIsParking: null },
       { new: true }
     );
 
-    res.status(200).json(updatePayment);
+    res.status(200).json(paymentID);
   } catch (err) {
     res.status(500).json(err.message);
     console.log(err.message);
   }
 };
 
-module.exports = { fetchPayment, publishPayment, updatePayment };
+module.exports = { fetchPayment, publishPayment, updatePayment, getLastPayment};
