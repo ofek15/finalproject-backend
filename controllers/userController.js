@@ -131,7 +131,17 @@ const translateToken = async (req, res) => {
   catch (err) {
     return res.status(500).json(err.message)
   }
-
 }
 
-module.exports = { fetchUser, publishUser, deleteUser, updateUser, loginFunc, translateToken, findUserById };
+const findUserExists = async (req, res) => {
+  try {
+    const OneUser = await User.findOne({username:req.body.username});
+    console.log(OneUser)
+    res.status(200).json(OneUser);
+  } catch (err) {
+    res.status(500).json(err.message);
+    console.log(err.message);
+  }
+};
+
+module.exports = { fetchUser, publishUser, deleteUser, updateUser, loginFunc, translateToken, findUserById, findUserExists };
