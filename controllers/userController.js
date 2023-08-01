@@ -41,6 +41,7 @@ const publishUser = async (req, res) => {
       email: req.body.email,
       phoneNumber: req.body.phoneNumber,
       licensePlates: req.body.licensePlates,
+      licenses:null, 
       currentParking: false
     });
 
@@ -92,20 +93,18 @@ const deleteUser = async (req, res) => {
 };
 
 const updateUser = async (req, res) => {
+  console.log("get into func")
   try {
-    console.log(req.body);
-    const hashedPasswordforupdate = await bcrypt.hash(
-      req.body.password,
-      saltround
-    );
+    
+    console.log(req.body.licenses, "req.body.backend");
     const updateUser = await User.findByIdAndUpdate(req.body._id, {
       username: req.body.username,
-      password: hashedPasswordforupdate,
       firstName: req.body.firstName,
       lastName: req.body.lastName,
       email: req.body.email,
       phoneNumber: req.body.phoneNumber,
-      licensePlates: req.body.licensePlates,
+      licenses:req.body.licenses
+      // licensePlates: req.body.licensePlates,
     },
       { new: true });
     console.log(updateUser);
