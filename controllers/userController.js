@@ -137,6 +137,7 @@ const findUserExists = async (req, res) => {
   try {
     const OneUser = await User.findOne({username:req.body.username});
     console.log(OneUser)
+
     res.status(200).json(OneUser);
   } catch (err) {
     res.status(500).json(err.message);
@@ -144,4 +145,17 @@ const findUserExists = async (req, res) => {
   }
 };
 
-module.exports = { fetchUser, publishUser, deleteUser, updateUser, loginFunc, translateToken, findUserById, findUserExists };
+const loginFuncFromVerify = async (req, res) => {
+ try {
+    const userExists = await User.findOne({ username: req.body.username });
+    const token = jwt.sign({ _id: userExists._id }, process.env.SECRET, { expiresIn: "96h" });
+    return res.status(200).json(token);
+  }catch (err) {
+    res.status(500).json(err.message);
+    console.log(err.message);
+  }
+}
+  
+
+
+module.exports = { fetchUser, publishUser, deleteUser, updateUser, loginFunc, loginFuncFromVerify, translateToken, findUserById, findUserExists };
