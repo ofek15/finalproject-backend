@@ -155,7 +155,25 @@ const loginFuncFromVerify = async (req, res) => {
     console.log(err.message);
   }
 }
+
+const changePassword = async (req, res) => {
+  try {
+    const token = req.body.token
+    console.log(token);
+    const username = jwt.verify(token, process.env.SECRET)
+    console.log(username);
+
+    const hashedPasswordforupdate = await bcrypt.hash(req.body.password,saltround);
+
+    const UserData = await User.findByIdAndUpdate(username._id ,{password: hashedPasswordforupdate},{new:true})
+
+    return res.status(200).json(UserData)
+  }
+  catch (err) {
+    return res.status(500).json(err.message)
+  }
+};
   
 
 
-module.exports = { fetchUser, publishUser, deleteUser, updateUser, loginFunc, loginFuncFromVerify, translateToken, findUserById, findUserExists };
+module.exports = { fetchUser, publishUser, deleteUser, updateUser, loginFunc, loginFuncFromVerify, translateToken, findUserById, findUserExists, changePassword };
