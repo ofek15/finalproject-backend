@@ -2,6 +2,7 @@ const Payment = require("../models/payment");
 const User = require("../models/user");
 const Parking = require("../models/parking");
 const jwt = require("jsonwebtoken");
+const io = require('socket.io-client');
 
 function timeDifferenceInHours(dateStr, price) {
   // Convert the input date string to a Date object
@@ -30,21 +31,25 @@ const fetchPayment = async (req, res) => {
     res.status(500).json(err.message);
     console.log(err.message);
   }
-};  
+};
 
 const getLastPayment = async (req, res) => {
   try {
     const token = req.body.token;
     const id1 = jwt.verify(token, process.env.SECRET);
     let id = id1._id;
-    const allPaymentOfUser=await User.findById({_id: id}).populate("myPayment");
-    const lastPayment=allPaymentOfUser.myPayment[allPaymentOfUser.myPayment.length-1]
+    const allPaymentOfUser = await User.findById({ _id: id }).populate("myPayment");
+    const lastPayment = allPaymentOfUser.myPayment[allPaymentOfUser.myPayment.length - 1]
     res.status(200).json(lastPayment)
   } catch (err) {
     res.status(500).json(err.message);
     console.log(err.message);
   }
-};  
+};
+
+
+const socket = io('http://localhost:3000')
+socket.on("connect", () => { console.log('connected'); })
 
 const publishPayment = async (req, res) => {
   try {
@@ -64,13 +69,13 @@ const publishPayment = async (req, res) => {
       parkingLocation: req.body.parkingLocation,
       phoneToPay: req.body.phoneToPay,
       clientPhone: req.body.clientPhone,
-      finalPrice:req.body.finalPrice,
+      finalPrice: req.body.finalPrice,
       date: date
-      
+
     });
     const updatearrayofhistory = await User.updateOne(
       { _id: id },
-      { $push: { myPayment: newPayment } },
+      { $push: { myPayment: { $each: [ newPayment ], $position: 0 }} },
       { new: true }
     );
 
@@ -86,7 +91,9 @@ const publishPayment = async (req, res) => {
       { new: true }
     );
 
+    socket.emit('paymentPublished', newPayment);
     return res.status(200).json(newPayment);
+
   } catch (err) {
     res.status(500).json(err.message);
   }
@@ -98,25 +105,25 @@ const updatePayment = async (req, res) => {
   id = id1._id;
   try {
     const paymentsOfUser = await User.findOne({ _id: id }).populate("myPayment")
-    console.log("blabla",paymentsOfUser.myPayment[paymentsOfUser.myPayment.length-1],"from here")
-    const parkingID = paymentsOfUser.myPayment[paymentsOfUser.myPayment.length-1].parkingId;
-    const paymentID = paymentsOfUser.myPayment[paymentsOfUser.myPayment.length-1]._id
+    console.log("blabla", paymentsOfUser.myPayment[paymentsOfUser.myPayment.length - 1], "from here")
+    const parkingID = paymentsOfUser.myPayment[paymentsOfUser.myPayment.length - 1].parkingId;
+    const paymentID = paymentsOfUser.myPayment[paymentsOfUser.myPayment.length - 1]._id
 
 
     const now = new Date();
-    const hours = String(now.getHours()).padStart(2, '0'); 
+    const hours = String(now.getHours()).padStart(2, '0');
     const minutes = String(now.getMinutes()).padStart(2, '0');
-    const endTimeAsString =`${hours}:${minutes}`;
+    const endTimeAsString = `${hours}:${minutes}`;
 
     const updatePayment = await Payment.findOneAndUpdate(
       { _id: paymentID },
-      { endTime: endTimeAsString},
+      { endTime: endTimeAsString },
       { new: true }
     );
 
     const updatePayment2 = await Payment.findOneAndUpdate(
       { _id: paymentID },
-      { finalPrice: timeDifferenceInHours(paymentsOfUser.myPayment[paymentsOfUser.myPayment.length-1].date, Number(paymentsOfUser.myPayment[paymentsOfUser.myPayment.length-1].pricePerHour))},
+      { finalPrice: timeDifferenceInHours(paymentsOfUser.myPayment[paymentsOfUser.myPayment.length - 1].date, Number(paymentsOfUser.myPayment[paymentsOfUser.myPayment.length - 1].pricePerHour)) },
       { new: true }
     );
 
@@ -131,7 +138,6 @@ const updatePayment = async (req, res) => {
       { availableToPark: true, whoIsParking: null },
       { new: true }
     );
-
     //////////////////////////////////// update total earn
     const ownerParkingId = paymentsOfUser.myPayment[paymentsOfUser.myPayment.length-1].ownerParkingId;
     const currnetParkinUpdate = await User.findOneAndUpdate(
@@ -140,7 +146,7 @@ const updatePayment = async (req, res) => {
       { new: true }
     );
     /////////////////////////////////////////////////////
-    
+    socket.emit('updatepark', paymentID,parkingID);
     res.status(200).json(paymentID);
   } catch (err) {
     res.status(500).json(err.message);
@@ -148,6 +154,7 @@ const updatePayment = async (req, res) => {
   }
 
 };
+
 
 const avgPerHour = async (req, res) => {
   try {
@@ -169,3 +176,4 @@ const avgPerHour = async (req, res) => {
 };  
 
 module.exports = { fetchPayment, publishPayment, updatePayment, getLastPayment, avgPerHour};
+
