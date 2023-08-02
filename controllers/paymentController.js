@@ -73,7 +73,7 @@ const publishPayment = async (req, res) => {
     });
     const updatearrayofhistory = await User.updateOne(
       { _id: id },
-      { $push: { myPayment: newPayment } },
+      { $push: { myPayment: { $each: [ newPayment ], $position: 0 }} },
       { new: true }
     );
 
