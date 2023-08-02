@@ -11,7 +11,8 @@ const user = new Schema({
     currentParking: {type:Boolean},
     myParking: [{type: mongoose.Types.ObjectId, ref: "parking"}],
     myPayment: [{type: mongoose.Types.ObjectId, ref: "payment"}] ,   
-    licenses: [{onelicenses:{type:String}}]    
+    licensePlates: [{type:String, unique: true}],
+    totalEarn: {type:Number}  
 })
 
 module.exports=mongoose.model("user", user)
