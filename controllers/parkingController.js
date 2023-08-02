@@ -71,8 +71,9 @@ const findOneParking = async (req, res) => {
       const updateParking = await Parking.findByIdAndUpdate(req.body._id, {
         availableStart: req.body.availableStart,
         availableEnd: req.body.availableEnd,
-        pricePerHour: req.body.pricePerHour
-    });
+        pricePerHour: req.body.pricePerHour,
+        $push: { photos: { $each: req.body.photos } }
+      }, { new: true })
     console.log(updateParking);
     res.status(200).json(updateParking);
     } catch (err) {
