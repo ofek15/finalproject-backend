@@ -1,5 +1,5 @@
 const express = require('express')
-const { fetchUser, publishUser, deleteUser, updateUser, loginFunc, loginFuncFromVerify, translateToken, findUserById, findUserExists, changePassword} = require('../controllers/userController')
+const { fetchUser, publishUser, deleteUser, updateUser, loginFunc, loginFuncFromVerify, translateToken, findUserById, findUserExists, changePassword, loginFuncFromToken} = require('../controllers/userController')
 const router = express.Router()
 
 router.get('/fetchUser', fetchUser)
@@ -12,5 +12,6 @@ router.post('/loginFuncFromVerify', loginFuncFromVerify)
 router.post('/translateToken', translateToken)
 router.post('/findUserExists', findUserExists)
 router.patch('/changePassword', changePassword) 
+router.post('/loginFuncFromToken', loginFuncFromToken)
 
 module.exports = router
