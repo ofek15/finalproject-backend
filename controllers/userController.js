@@ -41,7 +41,8 @@ const publishUser = async (req, res) => {
       email: req.body.email,
       phoneNumber: req.body.phoneNumber,
       licensePlates: req.body.licensePlates,
-      currentParking: false
+      currentParking: false,
+      totalEarn: 0
     });
 
     const userExists = await User.findOne({ username: req.body.username });

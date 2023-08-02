@@ -48,6 +48,7 @@ const getLastPayment = async (req, res) => {
 
 const publishPayment = async (req, res) => {
   try {
+    
     const token = req.body.token;
     const id1 = jwt.verify(token, process.env.SECRET);
     const date = new Date()
@@ -55,6 +56,7 @@ const publishPayment = async (req, res) => {
     console.log(id);
     const newPayment = await Payment.create({
       parkingId:req.body.parkingId,
+      ownerParkingId:req.body.ownerParkingId,
       parkName:req.body.parkName,
       startTime: req.body.startTime,
       endTime: null,
@@ -130,11 +132,40 @@ const updatePayment = async (req, res) => {
       { new: true }
     );
 
+    //////////////////////////////////// update total earn
+    const ownerParkingId = paymentsOfUser.myPayment[paymentsOfUser.myPayment.length-1].ownerParkingId;
+    const currnetParkinUpdate = await User.findOneAndUpdate(
+      { _id: ownerParkingId },
+      { $inc: { totalEarn: updatePayment2.finalPrice } },
+      { new: true }
+    );
+    /////////////////////////////////////////////////////
+    
     res.status(200).json(paymentID);
   } catch (err) {
     res.status(500).json(err.message);
     console.log(err.message);
   }
+
 };
 
-module.exports = { fetchPayment, publishPayment, updatePayment, getLastPayment};
+const avgPerHour = async (req, res) => {
+  try {
+    const allParking = await Parking.find({});
+    if (allParking.length === 0) {
+      return 0;
+    }
+  
+    let totalSum = 0;
+    allParking.forEach((obj) => {     
+        totalSum += Number(obj.pricePerHour);
+    });
+    const average = totalSum / allParking.length;
+    res.status(200).json( parseFloat(average.toFixed(2)));
+  } catch (err) {
+    res.status(500).json(err.message);
+    console.log(err.message);
+  }
+};  
+
+module.exports = { fetchPayment, publishPayment, updatePayment, getLastPayment, avgPerHour};
