@@ -41,7 +41,8 @@ const publishUser = async (req, res) => {
       email: req.body.email,
       phoneNumber: req.body.phoneNumber,
       licensePlates: req.body.licensePlates,
-      currentParking: false
+      currentParking: false,
+      totalEarn: 0
     });
 
     const userExists = await User.findOne({ username: req.body.username });
@@ -92,20 +93,18 @@ const deleteUser = async (req, res) => {
 };
 
 const updateUser = async (req, res) => {
+  console.log("get into func")
   try {
-    console.log(req.body);
-    const hashedPasswordforupdate = await bcrypt.hash(
-      req.body.password,
-      saltround
-    );
+    
+    console.log(req.body.licenses, "req.body.backend");
     const updateUser = await User.findByIdAndUpdate(req.body._id, {
       username: req.body.username,
-      password: hashedPasswordforupdate,
       firstName: req.body.firstName,
       lastName: req.body.lastName,
       email: req.body.email,
       phoneNumber: req.body.phoneNumber,
-      licensePlates: req.body.licensePlates,
+      licenses:req.body.licenses
+      // licensePlates: req.body.licensePlates,
     },
       { new: true });
     console.log(updateUser);
@@ -155,7 +154,25 @@ const loginFuncFromVerify = async (req, res) => {
     console.log(err.message);
   }
 }
+
+const changePassword = async (req, res) => {
+  try {
+    const token = req.body.token
+    console.log(token);
+    const username = jwt.verify(token, process.env.SECRET)
+    console.log(username);
+
+    const hashedPasswordforupdate = await bcrypt.hash(req.body.password,saltround);
+
+    const UserData = await User.findByIdAndUpdate(username._id ,{password: hashedPasswordforupdate},{new:true})
+
+    return res.status(200).json(UserData)
+  }
+  catch (err) {
+    return res.status(500).json(err.message)
+  }
+};
   
 
 
-module.exports = { fetchUser, publishUser, deleteUser, updateUser, loginFunc, loginFuncFromVerify, translateToken, findUserById, findUserExists };
+module.exports = { fetchUser, publishUser, deleteUser, updateUser, loginFunc, loginFuncFromVerify, translateToken, findUserById, findUserExists, changePassword };

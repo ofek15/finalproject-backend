@@ -185,9 +185,10 @@ const updateParking = async (req, res) => {
         availableStart: req.body.availableStart,
         availableEnd: req.body.availableEnd,
         pricePerHour: req.body.pricePerHour,
-      });
-      console.log(updateParking);
-      res.status(200).json(updateParking);
+        $push: { photos: { $each: req.body.photos } }
+      }, { new: true })
+    console.log(updateParking);
+    res.status(200).json(updateParking);
     } catch (err) {
       res.status(500).json(err.message);
       console.log(err.message);

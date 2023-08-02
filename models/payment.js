@@ -3,6 +3,7 @@ const Schema = mongoose.Schema;
 
 const payment = new Schema({
     parkingId:{type:String, required: true},
+    ownerParkingId:{type:String, required: true},
     parkName:{type:String, required: true},
     startTime: {type:String, required: true},
     endTime: {type:String},
