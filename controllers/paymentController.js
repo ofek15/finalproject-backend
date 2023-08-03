@@ -2,7 +2,10 @@ const Payment = require("../models/payment");
 const User = require("../models/user");
 const Parking = require("../models/parking");
 const jwt = require("jsonwebtoken");
-const io = require('socket.io-client');
+// const io = require('socket.io-client');
+// const socket = io('http://localhost:3000')
+// socket.on("connect", () => { console.log('connected'); })
+
 
 function timeDifferenceInHours(dateStr, price) {
   // Convert the input date string to a Date object
@@ -48,21 +51,20 @@ const getLastPayment = async (req, res) => {
 };
 
 
-const socket = io('http://localhost:3000')
-socket.on("connect", () => { console.log('connected'); })
+
 
 const publishPayment = async (req, res) => {
   try {
-    
+
     const token = req.body.token;
     const id1 = jwt.verify(token, process.env.SECRET);
     const date = new Date()
     const id = id1._id;
     console.log(id);
     const newPayment = await Payment.create({
-      parkingId:req.body.parkingId,
-      ownerParkingId:req.body.ownerParkingId,
-      parkName:req.body.parkName,
+      parkingId: req.body.parkingId,
+      ownerParkingId: req.body.ownerParkingId,
+      parkName: req.body.parkName,
       startTime: req.body.startTime,
       endTime: null,
       pricePerHour: req.body.pricePerHour,
@@ -75,7 +77,7 @@ const publishPayment = async (req, res) => {
     });
     const updatearrayofhistory = await User.updateOne(
       { _id: id },
-      { $push: { myPayment: newPayment} },
+      { $push: { myPayment: newPayment } },
       { new: true }
     );
 
@@ -90,8 +92,8 @@ const publishPayment = async (req, res) => {
       { availableToPark: false, whoIsParking: id },
       { new: true }
     );
-
-    socket.emit('paymentPublished', newPayment);
+    // console.log(availableToParkUpdate.availableToPark);
+    //     socket.emit('paymentPublished', availableToParkUpdate.availableToPark);
     return res.status(200).json(newPayment);
 
   } catch (err) {
@@ -133,20 +135,20 @@ const updatePayment = async (req, res) => {
       { new: true }
     );
 
-    const availableToParkUpdate = await Parking.findOneAndUpdate(
+    const availableToParkUpdateb = await Parking.findOneAndUpdate(
       { _id: parkingID },
       { availableToPark: true, whoIsParking: null },
       { new: true }
     );
     //////////////////////////////////// update total earn
-    const ownerParkingId = paymentsOfUser.myPayment[paymentsOfUser.myPayment.length-1].ownerParkingId;
+    const ownerParkingId = paymentsOfUser.myPayment[paymentsOfUser.myPayment.length - 1].ownerParkingId;
     const currnetParkinUpdate = await User.findOneAndUpdate(
       { _id: ownerParkingId },
       { $inc: { totalEarn: updatePayment2.finalPrice } },
       { new: true }
     );
     /////////////////////////////////////////////////////
-    socket.emit('updatepark', paymentID,parkingID);
+    // socket.emit('updatepark', availableToParkUpdateb.availableToPark);
     res.status(200).json(paymentID);
   } catch (err) {
     res.status(500).json(err.message);
@@ -162,18 +164,18 @@ const avgPerHour = async (req, res) => {
     if (allParking.length === 0) {
       return 0;
     }
-  
+
     let totalSum = 0;
-    allParking.forEach((obj) => {     
-        totalSum += Number(obj.pricePerHour);
+    allParking.forEach((obj) => {
+      totalSum += Number(obj.pricePerHour);
     });
     const average = totalSum / allParking.length;
-    res.status(200).json( parseFloat(average.toFixed(2)));
+    res.status(200).json(parseFloat(average.toFixed(2)));
   } catch (err) {
     res.status(500).json(err.message);
     console.log(err.message);
   }
-};  
+};
 
-module.exports = { fetchPayment, publishPayment, updatePayment, getLastPayment, avgPerHour};
+module.exports = { fetchPayment, publishPayment, updatePayment, getLastPayment, avgPerHour };
 
