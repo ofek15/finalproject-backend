@@ -17,10 +17,7 @@ mongoose
 
   app.use(cors())
   app.use(function (req, res, next) {
-    res.setHeader('Access-Control-Allow-Origin', '*'); // Replace * with specific origins if needed
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    res.setHeader('Access-Control-Allow-Credentials', true);
+    res.setHeader('Access-Control-Allow-Origin', 'https://parkit-parking.netlify.app, http://localhost:5000'); // Replace * with specific origins if needed
     next();
   });
   
