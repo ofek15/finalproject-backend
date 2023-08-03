@@ -103,8 +103,7 @@ const updateUser = async (req, res) => {
       lastName: req.body.lastName,
       email: req.body.email,
       phoneNumber: req.body.phoneNumber,
-      licenses:req.body.licenses
-      // licensePlates: req.body.licensePlates,
+      licensePlates: req.body.licensePlates,
     },
       { new: true });
     console.log(updateUser);
