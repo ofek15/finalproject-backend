@@ -83,6 +83,7 @@ const availableParkingAndDistance = async (req, res) => {
       availableAndTime[i].distanceText = distanceText;
       availableAndTime[i].distanceValue = distanceValue;
       const obj = {
+        _id: availableAndTime[i]._id,
         parkingName: availableAndTime[i].parkingName,
         parkingLocation: availableAndTime[i].parkingLocation,
         lat: availableAndTime[i].lat,
