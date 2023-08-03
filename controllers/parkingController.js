@@ -180,7 +180,7 @@ const deleteParking = async (req, res) => {
 const updateParking = async (req, res) => {
   console.log(req.body);
   const parkingStatus = await Parking.findById(req.body._id);
-  if (parkingStatus.availableToPark) {
+  if (parkingStatus?.availableToPark) {
     try {
       const updateParking = await Parking.findByIdAndUpdate(req.body._id, {
         availableStart: req.body.availableStart,
