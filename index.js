@@ -16,10 +16,7 @@ mongoose
   .catch((err) => console.log(err.message));
 
   app.use(cors())
-  app.use((req, res, next) => {
-    res.set("Access-Control-Allow-Origin", "http://localhost:5000")
-    res.json({ msg: "This is CORS-enabled for a Single Route" })
-  })
+  
   
 
 app.get("/", (req, res) => {
