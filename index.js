@@ -16,8 +16,6 @@ mongoose
   .catch((err) => console.log(err.message));
 
   app.use(cors())
-  
-  
 
 app.get("/", (req, res) => {
   res.json({ name: "ofek" });
@@ -31,19 +29,22 @@ app.use("/payment", paymentRoutes )
 app.listen(PORT, () => { 
   console.log(`App is listening on port: ${PORT}`);
 });
-const socketIO = require('socket.io');
-const io = socketIO(3000,{
-  cors:{
-    origin:['http://localhost:5000', 'http://localhost:5173'],
+// const socketIO = require('socket.io');
+// const io = socketIO(3000,{
+//   cors:{
+//     origin:['*'],
     
-  },
-}); 
+//   },
+// }); 
 
-io.on('connection', socket => {
-  socket.on('paymentPublished',(newPayment)=>{
-    socket.broadcast.emit('know-publish',newPayment)
-  })
-  socket.on('updatepark',(paymentID,parkingID)=>{
-    socket.broadcast.emit('know-update',parkingID)
-  })
-});
+// io.on('connection', socket => {
+
+//   socket.emit("hi","boy")
+//   socket.on("howdy",(arg)=>{console.log(arg)})
+//   // socket.on('paymentPublished',(availableToParkUpdate)=>{
+//   //   socket.broadcast.emit('know-publish',availableToParkUpdate)
+//   // })
+//   // socket.on('updatepark',(availableToParkUpdateb)=>{
+//   //   socket.emit('know-update',availableToParkUpdateb)
+//   // })
+// });
