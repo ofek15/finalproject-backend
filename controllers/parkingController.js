@@ -135,6 +135,22 @@ const findOneParking = async (req, res) => {
   }
 };
 
+const changeStatus = async (req, res) => {
+  try {
+    const parking = await Parking.findById({ _id: req.body._id });
+    if(parking.whoIsParking == null || parking.whoIsParking == undefined || parking.whoIsParking == "")
+    {
+    const changing = await Parking.findByIdAndUpdate({ _id: req.body._id }, {availableToPark: !parking.availableToPark});
+    res.status(200).json(changing);
+    }
+  
+    
+  } catch (err) {
+    res.status(500).json(err.message);
+    console.log(err.message);
+  }
+};
+
 const publishParking = async (req, res) => {
   // console.log(req.body);
   try {
@@ -207,4 +223,5 @@ module.exports = {
   findOneParking,
   availableParking,
   availableParkingAndDistance,
+  changeStatus,
 };
