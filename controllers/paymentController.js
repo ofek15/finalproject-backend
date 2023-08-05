@@ -2,9 +2,7 @@ const Payment = require("../models/payment");
 const User = require("../models/user");
 const Parking = require("../models/parking");
 const jwt = require("jsonwebtoken");
-// const io = require('socket.io-client');
-// const socket = io('http://localhost:3000')
-// socket.on("connect", () => { console.log('connected'); })
+
 
 
 function timeDifferenceInHours(dateStr, price) {
@@ -92,8 +90,6 @@ const publishPayment = async (req, res) => {
       { availableToPark: false, whoIsParking: id },
       { new: true }
     );
-    // console.log(availableToParkUpdate.availableToPark);
-    //     socket.emit('paymentPublished', availableToParkUpdate.availableToPark);
     return res.status(200).json(newPayment);
 
   } catch (err) {
@@ -148,7 +144,6 @@ const updatePayment = async (req, res) => {
       { new: true }
     );
     /////////////////////////////////////////////////////
-    // socket.emit('updatepark', availableToParkUpdateb.availableToPark);
     res.status(200).json(paymentID);
   } catch (err) {
     res.status(500).json(err.message);
