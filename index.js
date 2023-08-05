@@ -15,7 +15,7 @@ mongoose
   .then(() => console.log("Successfully connected to mongodb!"))
   .catch((err) => console.log(err.message));
 
-  app.use(cors())
+app.use(cors())
 
 
 app.get("/", (req, res) => {
@@ -24,28 +24,26 @@ app.get("/", (req, res) => {
 
 app.use(express.json());
 app.use("/user", userRoutes);
-app.use("/parking", parkingRoutes )
-app.use("/payment", paymentRoutes )
+app.use("/parking", parkingRoutes)
+app.use("/payment", paymentRoutes)
 
-app.listen(PORT, () => { 
+const server = app.listen(PORT, () => {
   console.log(`App is listening on port: ${PORT}`);
 });
-// const socketIO = require('socket.io');
-// const io = socketIO(3000,{
-//   cors:{
-//     origin:['*'],
-    
-//   },
-// }); 
+const socketIO = require('socket.io');
+const io = socketIO(server, {
+  cors: {
+    origin: '*',
+    methods: ['GET', 'POST'],
+    credentials: true
+  },
+});
 
-// io.on('connection', socket => {
-
-//   socket.emit("hi","boy")
-//   socket.on("howdy",(arg)=>{console.log(arg)})
-//   // socket.on('paymentPublished',(availableToParkUpdate)=>{
-//   //   socket.broadcast.emit('know-publish',availableToParkUpdate)
-//   // })
-//   // socket.on('updatepark',(availableToParkUpdateb)=>{
-//   //   socket.emit('know-update',availableToParkUpdateb)
-//   // })
-// });
+io.on('connection', socket => {
+  socket.on('paymentPublished',(payment)=>{
+    socket.broadcast.emit('know-publish',payment)
+  })
+  socket.on('updatepark',(info)=>{
+    socket.emit('know-update',info)
+  })
+});
