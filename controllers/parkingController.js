@@ -234,13 +234,17 @@ const deleteParking = async (req, res) => {
 const updateParking = async (req, res) => {
   console.log(req.body);
   const parkingStatus = await Parking.findById(req.body._id);
+  console.log(parkingStatus.availableToPark);
   if (parkingStatus?.availableToPark) {
     try {
       const updateParking = await Parking.findByIdAndUpdate(req.body._id, {
         availableStart: req.body.availableStart,
         availableEnd: req.body.availableEnd,
         pricePerHour: req.body.pricePerHour,
-        $push: { photos: { $each: req.body.photos } }
+        startDate: req.body.startDate,
+        endDate: req.body.endDate,
+        selectedDays: req.body.selectedDays,
+        shortTerm: req.body.shortTerm,
       }, { new: true })
     console.log(updateParking);
     res.status(200).json(updateParking);
@@ -249,7 +253,7 @@ const updateParking = async (req, res) => {
       console.log(err.message);
     }
   } else {
-    return res.status(404).json("cant change while parking");
+    res.status(404).json("cant change while parking");
   }
 };
 
