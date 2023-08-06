@@ -203,6 +203,7 @@ const publishParking = async (req, res) => {
       lat: req.body.lat,
       ownerID: req.body.ownerID,
       whoIsParking: null,
+      currentLicense: null,
       comments: req.body.comments,
       selectedDays: req.body.selectedDays,
       shortTerm: req.body.shortTerm,
