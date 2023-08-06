@@ -50,24 +50,44 @@ const isTimeInRange = (startTime, endTime) => {
 
   return false;
 };
+function isDateInRange(startDate, endDate) {
+  const currentDate = new Date();
+  const startDateObj = new Date(startDate);
+  const endDateObj = new Date(endDate);
+
+  return currentDate >= startDateObj && currentDate <= endDateObj;
+}
 
 const availableParkingAndDistance = async (req, res) => {
   try {
+    const date = new Date();
+    const day = date.getDay()
     const allAvailableParking = await Parking.find({ availableToPark: true });
-    const availableAndTime = allAvailableParking.filter((parking) =>
-      isTimeInRange(parking.availableStart, parking.availableEnd)
+    const onlyShort = allAvailableParking.filter((parking) =>
+    parking.shortTerm == true
+  );
+    const onlyLong = allAvailableParking.filter((parking) =>
+    parking.shortTerm == false
+  );
+    const availableDay = onlyLong.filter((parking) =>
+    parking.selectedDays[day]
+  );
+    const availableAndTime = availableDay.filter((parking) =>
+      isTimeInRange(parking.availableStart, parking.availableEnd) 
     );
+    const availableShort = allAvailableParking.filter((parking) => isDateInRange(parking.startDate, parking.endDate))
+    const allAfterFilters = availableAndTime.concat(availableShort)
     const withDistance = []
     const lat = req.body.lat;
     const lng = req.body.lng;
     const myLocation = `${lat},${lng}`;
-    for (let i = 0; i < availableAndTime.length; i++) {
+    for (let i = 0; i < allAfterFilters.length; i++) {
       const response = await axios.get(
         "https://maps.googleapis.com/maps/api/distancematrix/json",
         {
           params: {
             origins: myLocation, // Pass the combined location string
-            destinations: `${availableAndTime[i].lat},${availableAndTime[i].lng}`, // Combine lat and lng for each available parking
+            destinations: `${allAfterFilters[i].lat},${allAfterFilters[i].lng}`, // Combine lat and lng for each available parking
             travelMode: "DRIVING",
             key: API_KEY,
           },
@@ -80,22 +100,22 @@ const availableParkingAndDistance = async (req, res) => {
       const distanceValue = distance ? distance.value : 100000000;
       const timeText = duration ? duration.text : 'N/A';
       const timeValue = duration ? duration.value : 100000000;
-      availableAndTime[i].distanceText = distanceText;
-      availableAndTime[i].distanceValue = distanceValue;
+      allAfterFilters[i].distanceText = distanceText;
+      allAfterFilters[i].distanceValue = distanceValue;
       const obj = {
-        _id: availableAndTime[i]._id,
-        parkingName: availableAndTime[i].parkingName,
-        parkingLocation: availableAndTime[i].parkingLocation,
-        lat: availableAndTime[i].lat,
-        lng: availableAndTime[i].lng,
-        photos: availableAndTime[i].photos,
-        availableToPark: availableAndTime[i].availableToPark,
-        availableStart: availableAndTime[i].availableStart,
-        availableEnd: availableAndTime[i].availableEnd,
-        pricePerHour: availableAndTime[i].pricePerHour,
-        ownerID: availableAndTime[i].ownerID,
-        whoIsParking: availableAndTime[i].whoIsParking,
-        comments: availableAndTime[i].comments,
+        _id: allAfterFilters[i]._id,
+        parkingName: allAfterFilters[i].parkingName,
+        parkingLocation: allAfterFilters[i].parkingLocation,
+        lat: allAfterFilters[i].lat,
+        lng: allAfterFilters[i].lng,
+        photos: allAfterFilters[i].photos,
+        availableToPark: allAfterFilters[i].availableToPark,
+        availableStart: allAfterFilters[i].availableStart,
+        availableEnd: allAfterFilters[i].availableEnd,
+        pricePerHour: allAfterFilters[i].pricePerHour,
+        ownerID: allAfterFilters[i].ownerID,
+        whoIsParking: allAfterFilters[i].whoIsParking,
+        comments: allAfterFilters[i].comments,
         distanceText: distanceText,
         distanceValue: distanceValue,
         timeText: timeText,
@@ -104,7 +124,7 @@ const availableParkingAndDistance = async (req, res) => {
       console.log(obj);
       withDistance.push(obj)
     }
-    // console.log(withDistance);
+    console.log(withDistance);
     res.status(200).json(withDistance);
   } catch (err) {
     res.status(500).json(err.message);
@@ -114,11 +134,24 @@ const availableParkingAndDistance = async (req, res) => {
 
 const availableParking = async (req, res) => {
   try {
+    const date = new Date();
+    const day = date.getDay()
     const allAvailableParking = await Parking.find({ availableToPark: true });
-    const availableAndTime = allAvailableParking.filter((parking) =>
-      isTimeInRange(parking.availableStart, parking.availableEnd)
+    const onlyShort = allAvailableParking.filter((parking) =>
+    parking.shortTerm == true
+  );
+    const onlyLong = allAvailableParking.filter((parking) =>
+    parking.shortTerm == false
+  );
+    const availableDay = onlyLong.filter((parking) =>
+    parking.selectedDays[day]
+  );
+    const availableAndTime = availableDay.filter((parking) =>
+      isTimeInRange(parking.availableStart, parking.availableEnd) 
     );
-    res.status(200).json(availableAndTime);
+    const availableShort = allAvailableParking.filter((parking) => isDateInRange(parking.startDate, parking.endDate))
+    const allAfterFilters = availableAndTime.concat(availableShort)
+    res.status(200).json(allAfterFilters);
   } catch (err) {
     res.status(500).json(err.message);
     console.log(err.message);
@@ -157,6 +190,7 @@ const publishParking = async (req, res) => {
     // const token = req.body.token
     // const id1 = jwt.verify(token,process.env.SECRET)
     // id=id1._id
+  
     const newParking = await Parking.create({
       parkingName: req.body.parkingName,
       parkingLocation: req.body.parkingLocation,
@@ -170,6 +204,10 @@ const publishParking = async (req, res) => {
       ownerID: req.body.ownerID,
       whoIsParking: null,
       comments: req.body.comments,
+      selectedDays: req.body.selectedDays,
+      shortTerm: req.body.shortTerm,
+      startDate: req.body.startDate,
+      endDate: req.body.endDate,
     });
     console.log("dngjr");
     const updatearrayofParkings = await User.updateOne(
