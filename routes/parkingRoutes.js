@@ -9,6 +9,6 @@ router.patch('/updateParking', updateParking)
 router.post('/findOneParking', findOneParking)
 router.get('/availableParking', availableParking)
 router.post('/availableParkingAndDistance', availableParkingAndDistance)
-router.put('/changeStatus', changeStatus)
+router.patch('/changeStatus', changeStatus)
 
 module.exports = router
