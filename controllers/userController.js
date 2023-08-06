@@ -41,6 +41,7 @@ const publishUser = async (req, res) => {
       email: req.body.email,
       phoneNumber: req.body.phoneNumber,
       licensePlates: req.body.licensePlates,
+      activeLicense: req.body.licensePlates,
       currentParking: false,
       totalEarn: 0
     });
@@ -104,14 +105,31 @@ const updateUser = async (req, res) => {
       email: req.body.email,
       phoneNumber: req.body.phoneNumber,
       licensePlates: req.body.licensePlates,
+      activeLicense: req.body.activeLicense,
     },
       { new: true });
-    console.log(updateUser);
     res.status(200).json(updateUser);
   } catch (err) {
     res.status(500).json(err.message);
   }
 };
+
+const activeLicense = async (req , res) =>{
+  const {chosenLicensePlate,userId}=req.body
+  console.log(chosenLicensePlate);
+  console.log(userId);
+  console.log("got into the davids function ");
+  try{
+    const updateLicense= await User.findByIdAndUpdate(userId, {
+      
+activeLicense:chosenLicensePlate,
+    },
+      { new: true });
+      res.status(200).json(updateLicense);
+  } catch(err){
+    return res.status(500).json(err.message)
+  }
+}
 
 
 const translateToken = async (req, res) => {
@@ -189,4 +207,4 @@ const loginFuncFromToken = async (req, res) => {
   
 
 
-module.exports = { fetchUser, publishUser, deleteUser, updateUser, loginFunc, loginFuncFromVerify, translateToken, findUserById, findUserExists, changePassword, loginFuncFromToken };
+module.exports = { fetchUser, publishUser, deleteUser, updateUser, loginFunc, loginFuncFromVerify, translateToken, findUserById, findUserExists, changePassword, loginFuncFromToken, activeLicense };
