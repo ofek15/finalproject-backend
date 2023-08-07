@@ -40,10 +40,10 @@ const io = socketIO(server, {
 });
 
 io.on('connection', socket => {
-  socket.on('paymentPublished',(payment)=>{
-    socket.broadcast.emit('know-publish',payment)
+  socket.on('paymentPublished', (payment) => {
+    socket.broadcast.emit('know-publish', payment)
   })
-  socket.on('updatepark',(info)=>{
-    socket.emit('know-update',info)
+  socket.on('updatepark', () => {
+    socket.broadcast.emit('know-update', (info))
   })
 });
