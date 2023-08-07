@@ -87,7 +87,7 @@ const publishPayment = async (req, res) => {
 
     const availableToParkUpdate = await Parking.findOneAndUpdate(
       { _id: req.body.parkingId },
-      { availableToPark: false, whoIsParking: id },
+      { availableToPark: false, whoIsParking: id, currentLicense: currnetParkinUpdate.activeLicense },
       { new: true }
     );
     return res.status(200).json(newPayment);

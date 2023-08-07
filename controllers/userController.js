@@ -105,7 +105,6 @@ const updateUser = async (req, res) => {
       email: req.body.email,
       phoneNumber: req.body.phoneNumber,
       licensePlates: req.body.licensePlates,
-      activeLicense: req.body.activeLicense,
     },
       { new: true });
     res.status(200).json(updateUser);
@@ -113,23 +112,19 @@ const updateUser = async (req, res) => {
     res.status(500).json(err.message);
   }
 };
-
-const activeLicense = async (req , res) =>{
-  const {chosenLicensePlate,userId}=req.body
-  console.log(chosenLicensePlate);
-  console.log(userId);
-  console.log("got into the davids function ");
-  try{
-    const updateLicense= await User.findByIdAndUpdate(userId, {
-      
-activeLicense:chosenLicensePlate,
+const updatelicense = async (req, res) => {
+  try {
+  
+    const updatelicense = await User.findByIdAndUpdate(req.body._id, {
+      activeLicense: req.body.activeLicense,
     },
       { new: true });
-      res.status(200).json(updateLicense);
-  } catch(err){
-    return res.status(500).json(err.message)
+    res.status(200).json(updatelicense);
+  } catch (err) {
+    res.status(500).json(err.message);
   }
-}
+};
+
 
 
 const translateToken = async (req, res) => {
@@ -207,4 +202,4 @@ const loginFuncFromToken = async (req, res) => {
   
 
 
-module.exports = { fetchUser, publishUser, deleteUser, updateUser, loginFunc, loginFuncFromVerify, translateToken, findUserById, findUserExists, changePassword, loginFuncFromToken, activeLicense };
+module.exports = { fetchUser, publishUser, deleteUser, updateUser, loginFunc, loginFuncFromVerify, translateToken, findUserById, findUserExists, changePassword, loginFuncFromToken,updatelicense };
