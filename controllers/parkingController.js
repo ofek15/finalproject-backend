@@ -125,6 +125,7 @@ const availableParkingAndDistance = async (req, res) => {
       withDistance.push(obj)
     }
     console.log(withDistance);
+    withDistance.sort((a,b) => a.distanceValue-b.distanceValue)
     res.status(200).json(withDistance);
   } catch (err) {
     res.status(500).json(err.message);
