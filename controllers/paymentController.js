@@ -2,6 +2,7 @@ const Payment = require("../models/payment");
 const User = require("../models/user");
 const Parking = require("../models/parking");
 const jwt = require("jsonwebtoken");
+const moment = require('moment-timezone');
 
 
 
@@ -10,7 +11,8 @@ function timeDifferenceInHours(dateStr, price) {
   const inputDate = new Date(dateStr);
 
   // Get the current date and time
-  const now = new Date();
+  // const now = new Date();
+  const now = moment().tz('Your_Timezone');
 
   // Calculate the time difference in milliseconds
   const timeDifferenceInMilliseconds = now - inputDate;
