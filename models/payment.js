@@ -11,6 +11,7 @@ const payment = new Schema({
     parkingLocation: {type:String, required: true},
     phoneToPay: {type:String, required: true},
     clientPhone: {type:String, required: true},
+    clientName: {type:String, required: true},
     date: {type: String},
     finalPrice: {type:String}
 })

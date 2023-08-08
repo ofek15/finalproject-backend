@@ -247,6 +247,7 @@ const updateParking = async (req, res) => {
         endDate: req.body.endDate,
         selectedDays: req.body.selectedDays,
         shortTerm: req.body.shortTerm,
+        comments: req.body.comments,
       }, { new: true })
     console.log(updateParking);
     res.status(200).json(updateParking);

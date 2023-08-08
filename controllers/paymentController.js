@@ -76,6 +76,7 @@ const publishPayment = async (req, res) => {
       parkingLocation: req.body.parkingLocation,
       phoneToPay: req.body.phoneToPay,
       clientPhone: req.body.clientPhone,
+      clientName: req.body.clientName,
       finalPrice: req.body.finalPrice,
       date: date
 
