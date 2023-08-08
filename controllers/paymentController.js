@@ -62,7 +62,9 @@ const publishPayment = async (req, res) => {
     const available = await Parking.findById({_id: req.body.parkingId})
     if(!available.availableToPark)
     {
-     return res.status(404).json("Oops, Someone was fastest then you")
+      return(
+        res.status(404).json("Oops, Someone was faster then you")
+      )   
     }
     const newPayment = await Payment.create({
       parkingId: req.body.parkingId,
