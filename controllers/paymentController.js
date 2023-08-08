@@ -100,7 +100,7 @@ const publishPayment = async (req, res) => {
     return res.status(200).json(newPayment);
 
   } catch (err) {
-    res.status(500).json(err.message);
+    return res.status(500).json(err.message);
   }
 };
 
@@ -113,8 +113,6 @@ const updatePayment = async (req, res) => {
     console.log("blabla", paymentsOfUser.myPayment[paymentsOfUser.myPayment.length - 1], "from here")
     const parkingID = paymentsOfUser.myPayment[paymentsOfUser.myPayment.length - 1].parkingId;
     const paymentID = paymentsOfUser.myPayment[paymentsOfUser.myPayment.length - 1]._id
-
-
     const now = new Date();
     const hours = String(now.getHours()).padStart(2, '0');
     const minutes = String(now.getMinutes()).padStart(2, '0');
@@ -134,13 +132,13 @@ const updatePayment = async (req, res) => {
 
     const currnetParkinUpdateb = await User.findOneAndUpdate(
       { _id: id },
-      { currentParking: false },
+      { currentParking: false},
       { new: true }
     );
 
     const availableToParkUpdateb = await Parking.findOneAndUpdate(
       { _id: parkingID },
-      { availableToPark: true, whoIsParking: null },
+      { availableToPark: true, whoIsParking: null ,currentLicense: null  },
       { new: true }
     );
     //////////////////////////////////// update total earn
