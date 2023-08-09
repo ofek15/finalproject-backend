@@ -120,12 +120,12 @@ const updatePayment = async (req, res) => {
       paymentsOfUser.myPayment[paymentsOfUser.myPayment.length - 1].parkingId;
     const paymentID =
       paymentsOfUser.myPayment[paymentsOfUser.myPayment.length - 1]._id;
-    const now = new Date();
-    const options = { hour: "2-digit", minute: "2-digit", hour12: false };
-    const endTimeAsString = now.toLocaleTimeString(undefined, options);
+    // const now = new Date();
+    // const options = { hour: "2-digit", minute: "2-digit", hour12: false };
+    // const endTimeAsString = now.toLocaleTimeString(undefined, options);
     const updatePayment = await Payment.findOneAndUpdate(
       { _id: paymentID },
-      { endTime: endTimeAsString },
+      { endTime: req.body.endTime },
       { new: true }
     );
 
