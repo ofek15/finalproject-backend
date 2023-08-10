@@ -13,7 +13,7 @@ const fetchParking = async (req, res) => {
   }
 };
 
-const API_KEY = "AIzaSyBG1NzDqiYX9i52WMEJX-_5fSVvPlKl-lA";
+const API_KEY = "AIzaSyBXEFs67UcCLh4rwdwW9IrjkeJxsQdY3_M";
 const isTimeInRange = (startTime, endTime) => {
   const currentTimeObj = new Date();
   const startTimeArr = startTime.split(":");
@@ -176,6 +176,9 @@ const changeStatus = async (req, res) => {
     {
     const changing = await Parking.findByIdAndUpdate({ _id: req.body._id }, {availableToPark: !parking.availableToPark});
     res.status(200).json(changing);
+    }
+    else{
+      res.status(404).json("error")
     }
   
     
